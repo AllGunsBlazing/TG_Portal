@@ -13,53 +13,46 @@ def home(request):
     return render(request, 'webapp/index.html') 
 
 # - Register a user 
-
 def register(request):
     form = CreateUserForm()
-    
+
     if request.method == "POST":    # if we are making a post request from our register.html page which is we are sending data to our database
-        
         form = CreateUserForm(request.POST)
 
         if form.is_valid():
-            
             form.save()
 
-           return redirect('login')
-           
-    context = {'form':form}
+            # return redirect('login')
     
-    return render(request, 'webapp/register.html',context=context)
+    context = {'form': form}
+
+    return render(request, 'webapp/register.html', context=context)
+
 
 # - LOGIN A USER
+def login(request):
+    form = LoginForms()
 
-    def login(request):
-        form = LoginForm()
+    if request.method == "POST":
+        form = LoginForms(request, data=request.POST)
+    
+    if form.is_valid():
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
         
-        if request.method == "POST":
-            
-            form = LoginForm(request, data=request.POST)
-            
-            if form.is_valid():
-                
-                username = request.POST.get('username')
-                password = request.POST.get('password')
-
-                user = authenticate(request, username=username, password=password)
-                
-                if user is not None:
-                    
-                    auth.login(request, user)
-                #    return redirect('')
-                
-                
+        if user is not None:
+            auth.login(request, user)
+            # return redirect('')  # Uncomment this line if you want to redirect somewhere
+        
     context = {'form': form}
 
     return render(request, 'webapp/login.html', context=context)
 
-        
-        
-        
-        
-        
+
+    
+    
+    
+    
         
